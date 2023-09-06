@@ -36,6 +36,8 @@ Navigate to /etc/systemd/system/
             WantedBy=sockets.target
 
 #Create another file named: gunicorn.service and paste the code below. for that use sudo nano gunicorn.service
+
+
             [Unit]
             Description=gunicorn daemon
             Requires=gunicorn.socket
@@ -60,6 +62,8 @@ sudo systemctl enable gunicorn.socket
 **3) Nginx configuration**
 Navigate to /etc/nginx/sites-available
 #Create a file named: any_name(example - gunicorn_name) and paste the code below. for that use sudo nano gunicorn_name
+
+
               server {
                   server_name <your_ip_address from AWS instance>;
                   location = /favicon.ico { access_log off; log_not_found off; }
@@ -80,6 +84,8 @@ Navigate to /etc/nginx/sites-available
 sudo bash
 #now we will be logged to another terminal of bash which we have permission to access all files , so from there type the following
 sudo nano nginx.conf (#and paste the following at the end)
+
+
             http{
             	...
             	client_max_body_size 10M; (# we need to enter only this line . http and brackets is already there with lots of other codes)
@@ -98,7 +104,7 @@ sudo shutdown -r now (# Restarting the server. connection will be lost. you need
 
 #Now visit http://<your_ip_address>/ to checkbits working.(If it is showing the gunicorn page, it means that the default server is working, not the custom server(gunicorn_name))
  In order to make the custom server gunicorn_name to work we can use the following helpful command
-                   sudo systemctl daemon-reload                -   Must be executed if you change the gunicorn.service file.
+                  sudo systemctl daemon-reload                 -   Must be executed if you change the gunicorn.service file.
                   sudo systemctl restart gunicorn              -   If you change code on your server you must execute this to see the changes take place.
                   sudo systemctl status gunicorn
                   sudo journalctl                              -   All the logs are consolidated here
