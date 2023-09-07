@@ -187,7 +187,7 @@ sudo shutdown -r now (# Restarting the server. connection will be lost. you need
   
   sudo systemctl status redis   (should see the status as active after entering this code)
   
-  # CTRL+C to exit.
+  #CTRL+C to exit.
   
   sudo apt install net-tools   -   Confirm Redis is running at 127.0.0.1. Port should be 6379 by default.
   
@@ -197,6 +197,8 @@ sudo shutdown -r now (# Restarting the server. connection will be lost. you need
 
 
 **6) ASGI for Hosting Django Channels as a Separate Application**
+
+
 
 
 
