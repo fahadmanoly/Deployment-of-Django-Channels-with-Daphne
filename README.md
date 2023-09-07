@@ -243,13 +243,75 @@ sudo shutdown -r now (# Restarting the server. connection will be lost. you need
                         WantedBy=multi-user.target
 
 
-systemctl daemon-reload
+ systemctl daemon-reload
 
-systemctl start daphne.service
+ systemctl start daphne.service
 
-systemctl status daphne.service
+ systemctl status daphne.service
 
-#Check the status and exit by typing cntr+c
+ #Check the status and exit by typing cntr+c
+
+
+**8) Starting the daphne Service when Server boots**
+
+ Create the script to run daphne in the root folder. Please make sure that it is in the root folder. To Navigate to root after reaching the ubuntu folder we should press cd .. twice to reach to root. after reaching root if we type 'ls' then we would be able to see the boot files. DO teh following after reaching there
+ 
+ #create boot.sh(here we wont have permission to get access. so too get access we should login to the terminal of root by typing 'sudo bash' 
+
+ #!/bin/sh
+ 
+ sudo systemctl start daphne.service
+ 
+ Save and close.
+
+ Type exit
+
+ #we will reach to ubuntu again when we exit from bash, there
+
+ chmod u+x /root/boot.sh
+
+ Now Navigate to /etc/systemd/system
+
+ #there create on_boot.service using the following command
+
+ sudo bash - get into that terminal again for hte permission to access and edit
+
+ sudo nano _boot.service and paste the following
+
+ 
+                         [Service]
+                        ExecStart=/root/boot.sh
+                        
+                        [Install]
+                        WantedBy=default.target
+
+Save and close.
+
+type exit and exit from bash to the ubuntu
+
+sudo systemctl daemon-reload       -  Reloading the boot service
+
+sudo systemctl start on_boot       -  Starting the boot service
+
+sudo systemctl enable on_boot      -  Enabling it to run at boot
+
+ufw allow 8001                     -  Allowing daphne service through firewall
+
+sudo shutdown -r now               -  Restarting the server
+
+systemctl status on_boot.service   -  Check the status of on_boot.service
+
+sudo journalctl -u on_boot.service -  Taking journals to see the logs(here we should see that completed and successfully deactivated)
+
+systemctl status daphne.service    -  Check if the daphne service started when the server started
+
+#**Purchase a domain and make https to give it on domain name.
+
+ 
+
+ 
+
+
 
 
 
