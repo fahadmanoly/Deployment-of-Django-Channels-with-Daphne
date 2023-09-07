@@ -198,6 +198,61 @@ sudo shutdown -r now (# Restarting the server. connection will be lost. you need
 
 **6) ASGI for Hosting Django Channels as a Separate Application**
 
+    Your asgi.py file inside your project should be like below. It will come automatically like this. Need to ensure only here. dont edit
+
+
+                        import os
+                        import django
+                        from channels.routing import ProtocolTypeRouter, URLRouter
+                        from django.core.asgi import get_asgi_application
+                        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bandhanback.settings')
+                        os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+                        django.setup()
+                        from chat.routing import websocket_urlpatterns
+                        
+                        application = ProtocolTypeRouter({
+                            'http': get_asgi_application(),
+                            'websocket': URLRouter(websocket_urlpatterns),
+                        })
+
+
+**7) Deploying Django Channels with Daphne & Systemd**
+
+  #Navigate to root, I mean Ubuntu and install Daphne(It should be on Ubuntu, not inside the project directory)
+
+  Sudo apt install daphne
+
+  Navigate to /etc/systemd/system/
+
+  Create daphne.service. Notice the port is 8001. To do this use the following command and should be inside /etc/systemd/system
+
+  Sudo nano daphne.service and paste the follwoing
+
+                        [Unit]
+                        Description=WebSocket Daphne Service
+                        After=network.target
+                        
+                        [Service]
+                        Type=simple
+                        User=root
+                        WorkingDirectory=/home/ubuntu/dir 1/dir 2/your project directory where we can find the manage.py file
+                        ExecStart=/home/ubuntu/dir/1/project dir where we can find venv file/venv/bin/python /home/ubuntu/dir 1/project dir where we can find venv file/venv/bin/daphne -b 0.0.0.0 -p 8001 your project name.asgi:application
+                        Restart=on-failure
+                        
+                        [Install]
+                        WantedBy=multi-user.target
+
+
+systemctl daemon-reload
+
+systemctl start daphne.service
+
+systemctl status daphne.service
+
+#Check the status and exit by typing cntr+c
+
+
+
 
 
 
