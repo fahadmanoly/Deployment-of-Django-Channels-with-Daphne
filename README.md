@@ -305,7 +305,50 @@ sudo journalctl -u on_boot.service -  Taking journals to see the logs(here we sh
 
 systemctl status daphne.service    -  Check if the daphne service started when the server started
 
-#**Purchase a domain and make https to give it on domain name.
+
+
+**9) Domain Setup**
+
+ #Purchase a domain and setup the ip address of the aws instance in it
+
+ Update Nginx config. do the following to do it
+
+ Navigate to /etc/nginx/sites-available
+
+ update the gunicorn whcih was setup earlier.(follow the below steps to do that)
+
+ sudo nano gunicorn_name  and the give your domain name after the ip address where it is specified
+
+                           server {
+                              server_name ip_address of AWS instance  purchased_domain_name.xyz(or whatever)  www.purchased_domain_name.xyz(or whatever)
+                              location = /favicon.ico { access_log off; log_not_found off; }
+                              location /static/ {
+                                  root /home/ubuntu/dir 1/dir 2/projectname(where we can find manage.py);
+                              }
+                           
+                               location / {
+                                  include proxy_params;
+                                  proxy_pass http://unix:/run/gunicorn.sock;
+                              }
+                          }
+
+ sudo systemctl reload nginx
+
+ sudo nginx -t     -  Make sure nginx configuration is still good.
+
+ #Update the allowed host in settings.py in the project file
+
+              ALLOWED_HOSTS =  [ "ip_addresss", "purchased_domain_name.xyz", "www.purchased_domain_name.xyz" ]
+
+
+#Apply the changes
+
+service gunicorn restart
+
+#Now its time to wait to get into effect. It may long upto maximum 1 hour
+
+  
+             
 
  
 
