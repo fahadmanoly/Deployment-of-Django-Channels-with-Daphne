@@ -497,7 +497,9 @@ service gunicorn restart
 
  save and exit
 
- wait for 5 minutes and check whether the site is working
+ wait for 5 minutes restart the server using sudo shutdown -r now
+
+ wait for 15 minutes and check your site is working
 
   
 
