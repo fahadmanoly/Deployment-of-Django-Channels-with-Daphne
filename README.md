@@ -349,6 +349,163 @@ service gunicorn restart
 
 #Now its time to wait to get into effect. It may long upto maximum 1 hour
 
+
+**10) Making HTTPS**
+
+ sudo apt install certbot python3-certbot-nginx
+
+ sudo systemctl reload nginx
+
+ sudo ufw allow 'Nginx Full'
+
+ sudo ufw delete allow 'Nginx HTTP'
+
+ sudo certbot --nginx -d <your-domain.whatever> -d www.<your-domain.whatever>
+
+ sudo systemctl status certbot.timer
+
+ sudo certbot renew --dry-run
+
+**Update Nginx**
+
+ Navigate to /etc/nginx/sites-available
+
+ sudo nano nginx_name
+
+                        server {
+                        
+                            ...
+                            
+                            location /ws/ {
+                                proxy_http_version 1.1;
+                                proxy_set_header Upgrade $http_upgrade;
+                                proxy_set_header Connection "upgrade";
+                                proxy_redirect off;
+                                proxy_pass http://127.0.0.1:8001;
+                            }
+                        
+                            ...
+                        }
+
+**Update Daphne**
+
+ Navigate to /etc/systemd/system
+
+ sudo nano daphne.service
+
+ 
+ [Unit]
+                        Description=WebSocket Daphne Service
+                        After=network.target
+                        
+                        [Service]
+                        Type=simple
+                        User=root
+                        WorkingDirectory=/home/ubuntu/proj directory/project directory 2 where we can find manage.py
+                        ExecStart=/home/ubuntu/project folder where venv is /venv/bin/python /home/ubunto/project folder where venv is /venv/bin/daphne -e ssl:8001:privateKey=/etc/letsencrypt/live/your domain name.whatever/privkey.pem:certKey=/etc/letsencrypt/live/your domain name.whatever/fullchain.pem your_project_name.asgi:application  
+                        Restart=on-failure
+                        
+                        [Install]
+                        WantedBy=multi-user.target
+
+
+**Reload everything**
+
+ sudo systemctl daemon-reload
+
+ sudo systemctl restart redis.service
+
+ sudo systemctl start gunicorn.socket
+
+ sudo systemctl enable gunicorn.socket
+
+ sudo systemctl restart gunicorn
+
+ sudo systemctl start daphne.service
+ 
+ sudo service daphne restart
+
+ sudo systemctl restart nginx
+
+
+**Check Status is everything working**
+ 
+ systemctl status daphne.service
+ 
+ systemctl status on_boot.service
+
+ sudo systemctl status redis
+ 
+ sudo systemctl status certbot.timer
+
+ sudo nginx -t
+
+ sudo systemctl status gunicorn
+
+ sudo systemctl status daphne.service
+
+
+**11) Changes in AWS instance**
+
+**Add Security Group Rule for Port 443:**
+
+            Go to the AWS Management Console.
+            
+            Navigate to the EC2 dashboard.
+            
+            Select the EC2 instance associated with your web server.
+            
+            In the "Description" tab, scroll down to the "Security groups" section and click on the linked security group (e.g., 'launch-wizard-1').
+            
+            In the security group details, click the "Inbound rules" tab.
+            
+            Click the "Edit inbound rules" button.
+            
+            Click the "Add rule" button.
+            
+            Set the following values:
+            
+            Type: HTTPS (Port 443)
+            
+            Source: 0.0.0.0/0 (or limit to specific IP ranges if needed)
+            
+            Click the "Save rules" button to add the rule allowing incoming traffic on port 443.
+
+ **Update Nginx**
+
+  Navigate to /etc/nginx/
+
+  sudo nano nginx.conf
+
+  #after the line "ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE", paste the follwoing
+  
+              ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384';
+              
+              ssl_prefer_server_ciphers off;
+
+  save and exit
+
+  Navigate to etc/nginx/sites-available
+
+  sudo nano nginx_name
+
+  after the line "ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot", paste the follwoing
+
+                  ssl_session_cache shared:SSL:10m;
+                  
+                  ssl_stapling on;
+
+ save and exit
+
+ wait for 5 minutes and check whether the site is working
+                  
+                  ssl_stapling_verify on;
+
+  
+
+
+
+
   
              
 
