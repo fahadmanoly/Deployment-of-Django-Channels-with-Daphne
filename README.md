@@ -27,6 +27,7 @@ mkdir  < project directory2 >
 cd < project directory2 >
 
 git init
+
 git pull https://github.com/your git id/your repository.git branch 
 
 pip install -r requirements.txt
@@ -82,6 +83,7 @@ Navigate to /etc/systemd/system/
             WantedBy=multi-user.target
 
 sudo systemctl start gunicorn.socket
+
 sudo systemctl enable gunicorn.socket
 
 **3) Nginx configuration**
