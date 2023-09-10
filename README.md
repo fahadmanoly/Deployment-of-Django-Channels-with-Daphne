@@ -498,8 +498,6 @@ service gunicorn restart
  save and exit
 
  wait for 5 minutes and check whether the site is working
-                  
-                  ssl_stapling_verify on;
 
   
 
