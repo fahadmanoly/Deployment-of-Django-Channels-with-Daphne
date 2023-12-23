@@ -501,6 +501,18 @@ service gunicorn restart
 
  wait for 15 minutes and check your site is working
 
+
+**Changes for Nginx in AWS instance**
+
+sudo rsync -av /home/ubuntu/MyBlog/firstproject/static /var/www/    -  changing the static file to diffrent location and then do the following
+
+sudo nano /etc/nginx/sites-enabled/myproject    - when this page opens, change the static file location to root /var/www/static;
+
+thats it
+
+
+ 
+
   
 
 
